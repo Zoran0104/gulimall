@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://zoran0104.top:3306/gulimall_wms
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: zoran
+    password: zoran0104##
+    type: com.alibaba.druid.pool.DruidDataSource
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+server:
+  port: 11000
