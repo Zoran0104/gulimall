@@ -8,6 +8,7 @@ import com.zoran.common.utils.Query;
 import com.zoran.gulimallproduct.dao.CategoryDao;
 import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.CategoryService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -30,6 +31,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
+    @Cacheable("category")
     public List<CategoryEntity> getTreeList() {
         List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
         return categoryEntities.stream()
