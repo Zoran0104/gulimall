@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("categoryService")
@@ -35,7 +36,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
                 .peek(categoryEntity ->
                         categoryEntity.setSubTree(getSubTree(categoryEntity, categoryEntities)))
-                .sorted(Comparator.comparingInt(CategoryEntity::getSort))
+                .sorted(Comparator.comparingInt(m -> Optional.ofNullable(m.getSort()).orElse(0)))
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +44,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return categoryEntities.stream()
                 .filter(entity -> entity.getParentCid().equals(categoryEntity.getCatId()))
                 .peek(entity -> entity.setSubTree(getSubTree(entity, categoryEntities)))
-                .sorted(Comparator.comparingInt(CategoryEntity::getSort))
+                .sorted(Comparator.comparingInt(m -> Optional.ofNullable(m.getSort()).orElse(0)))
                 .collect(Collectors.toList());
     }
 }
