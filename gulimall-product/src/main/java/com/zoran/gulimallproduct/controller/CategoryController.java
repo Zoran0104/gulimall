@@ -1,19 +1,15 @@
 package com.zoran.gulimallproduct.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zoran.gulimallproduct.entity.CategoryEntity;
-import com.zoran.gulimallproduct.service.CategoryService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
+import com.zoran.gulimallproduct.entity.CategoryEntity;
+import com.zoran.gulimallproduct.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -25,11 +21,19 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:52
  */
 @RestController
-@RequestMapping("gulimallproduct/category")
+@RequestMapping("product/category")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * 获取树形分类表
+     */
+    @GetMapping("/treeList")
+    public R treeList() {
+        List<CategoryEntity> treeList =  categoryService.getTreeList();
+        return R.ok().put("result", treeList);
+    }
     /**
      * 列表
      */

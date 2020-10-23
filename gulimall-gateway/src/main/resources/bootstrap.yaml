@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: gulimall-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: baidu_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+        - id: qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        namespace: 98e1df82-afef-4137-9035-a287b3f925da
+        group: gateway
+        extension-configs:
+##          - { data-id: datasource.yaml,group: common,refresh: true }
+          - { data-id: nacos.yaml,group: common,refresh: true}
+##          - { data-id: mybatis-plus.yaml,group: common,refresh: true }
+          - { data-id: spring.yaml,group: common,refresh: true }
+  profiles:
+    active: dev
+
+server:
+  port: 80
