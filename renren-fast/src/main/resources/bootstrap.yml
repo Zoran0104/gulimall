@@ -1,0 +1,34 @@
+spring:
+    application:
+        name: gulimall-admin
+    cloud:
+        nacos:
+            discovery:
+                server-addr: localhost:8848
+            config:
+                server-addr: localhost:8848
+                file-extension: yaml
+                namespace: 98e1df82-afef-4137-9035-a287b3f925da
+                group: renren
+                extension-configs:
+                    - { data-id: datasource.yaml,group: common,refresh: true }
+                    - { data-id: nacos.yaml,group: common,refresh: true }
+                    - { data-id: mybatis-plus.yaml,group: common,refresh: true }
+                    - { data-id: spring.yaml,group: common,refresh: true }
+    profiles:
+        active: dev
+
+
+##多数据源的配置
+#dynamic:
+#  datasource:
+#    slave1:
+#      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#      url: jdbc:sqlserver://localhost:1433;DatabaseName=renren_security
+#      username: sa
+#      password: 123456
+#    slave2:
+#      driver-class-name: org.postgresql.Driver
+#      url: jdbc:postgresql://localhost:5432/renren_security
+#      username: renren
+#      password: 123456
