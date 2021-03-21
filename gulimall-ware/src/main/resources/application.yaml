@@ -1,16 +1,18 @@
 spring:
   application:
-    name: gulimall-member
+    name: gulimall-ware
   cloud:
     nacos:
       config:
         server-addr: localhost:8848
         file-extension: yaml
         namespace: 98e1df82-afef-4137-9035-a287b3f925da
-        group: member
+        group: ware
         extension-configs:
           - { data-id: common.yaml,group: common,refresh: true }
   profiles:
     active: dev
+  datasource:
+    url: jdbc:mysql:///gulimall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 server:
-  port: 8000
+  port: 11000
