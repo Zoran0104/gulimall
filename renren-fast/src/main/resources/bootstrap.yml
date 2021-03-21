@@ -11,10 +11,7 @@ spring:
                 namespace: 98e1df82-afef-4137-9035-a287b3f925da
                 group: renren
                 extension-configs:
-                    - { data-id: datasource.yaml,group: common,refresh: true }
-                    - { data-id: nacos.yaml,group: common,refresh: true }
-                    - { data-id: mybatis-plus.yaml,group: common,refresh: true }
-                    - { data-id: spring.yaml,group: common,refresh: true }
+                    - { data-id: common.yaml,group: common,refresh: true }
     profiles:
         active: dev
 
