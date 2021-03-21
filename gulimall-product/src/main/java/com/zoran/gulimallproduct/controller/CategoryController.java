@@ -5,6 +5,7 @@ import com.zoran.common.utils.R;
 import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.CategoryService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product/category")
 @AllArgsConstructor
+@Slf4j
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -80,8 +82,7 @@ public class CategoryController {
      */
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] catIds) {
-        categoryService.removeByIds(Arrays.asList(catIds));
-
+        categoryService .removeMenuByIds(Arrays.asList(catIds));
         return R.ok();
     }
 

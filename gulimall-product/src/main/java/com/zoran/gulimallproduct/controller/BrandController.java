@@ -1,19 +1,14 @@
 package com.zoran.gulimallproduct.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zoran.gulimallproduct.entity.BrandEntity;
-import com.zoran.gulimallproduct.service.BrandService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
+import com.zoran.gulimallproduct.entity.BrandEntity;
+import com.zoran.gulimallproduct.service.BrandService;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -25,10 +20,10 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:52
  */
 @RestController
-@RequestMapping("gulimallproduct/brand")
+@RequestMapping("product/brand")
+@AllArgsConstructor
 public class BrandController {
-    @Autowired
-    private BrandService brandService;
+    private final BrandService brandService;
 
     /**
      * 列表
