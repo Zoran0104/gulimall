@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gulimall-thirdparty
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        namespace: 98e1df82-afef-4137-9035-a287b3f925da
+        group: product
+        extension-configs:
+          - { data-id: common.yaml,group: common,refresh: true }
+server:
+  port: 12000
+alibaba:
+  cloud:
+    access-key: LTAI4GKWMCGocfKTkPVpyqKp
+    secret-key: uQzQXGFRYxiTRM6LonDq8fFWWg0u5P
+    oss:
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      bucket: gulimall-zoran
