@@ -1,6 +1,8 @@
 spring:
+  profiles:
+    active: dev
   application:
-    name: gulimall-product
+    name: gulimall-thirdparty
   cloud:
     nacos:
       config:
@@ -10,9 +12,12 @@ spring:
         group: product
         extension-configs:
           - { data-id: common.yaml,group: common,refresh: true }
-  profiles:
-    active: dev
-  datasource:
-    url: jdbc:mysql:///gulimall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 server:
-  port: 10000
+  port: 12000
+alibaba:
+  cloud:
+    access-key: LTAI4GKWMCGocfKTkPVpyqKp
+    secret-key: uQzQXGFRYxiTRM6LonDq8fFWWg0u5P
+    oss:
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      bucket: gulimall-zoran
