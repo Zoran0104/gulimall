@@ -1,5 +1,6 @@
 package com.zoran.gulimallthirdparty.controller;
 
+import com.zoran.common.utils.R;
 import com.zoran.gulimallthirdparty.service.OssService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ public class OssController {
     private final OssService ossService;
 
     @GetMapping("/policy")
-    public Map<String, String> getPolicy() {
-        return ossService.getPolicy();
+    public R getPolicy() {
+        return R.ok().put("data",ossService.getPolicy());
     }
 }

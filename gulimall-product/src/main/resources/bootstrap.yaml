@@ -12,11 +12,6 @@ spring:
           - { data-id: common.yaml,group: common,refresh: true }
   profiles:
     active: dev
-  datasource:
-    url: jdbc:mysql:///gulimall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: zoran
-    password: zoran0104
 server:
   port: 10000
 logging:
