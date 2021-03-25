@@ -5,11 +5,13 @@ import com.zoran.common.utils.R;
 import com.zoran.gulimallproduct.entity.BrandEntity;
 import com.zoran.gulimallproduct.service.BrandService;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-
 
 
 /**
@@ -50,8 +52,8 @@ public class BrandController {
      * 保存
      */
     @RequestMapping("/save")
-        public R save(@RequestBody BrandEntity brand){
-		brandService.save(brand);
+    public R save(@Valid @RequestBody BrandEntity brand) {
+        brandService.save(brand);
 
         return R.ok();
     }
@@ -70,8 +72,8 @@ public class BrandController {
      * 删除
      */
     @RequestMapping("/delete")
-        public R delete(@RequestBody Long[] brandIds){
-		brandService.removeByIds(Arrays.asList(brandIds));
+    public R delete(@RequestBody Long[] brandIds) {
+        brandService.removeByIds(Arrays.asList(brandIds));
 
         return R.ok();
     }
