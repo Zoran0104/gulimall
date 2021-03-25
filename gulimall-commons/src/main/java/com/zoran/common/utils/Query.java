@@ -52,7 +52,7 @@ public class Query<T> {
 
 
         //前端字段排序
-        if(com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotEmpty(orderField) && com.baomidou.mybatisplus.core.toolkit.StringUtils.isNotEmpty(order)){
+        if(StringUtils.isNotEmpty(orderField) && StringUtils.isNotEmpty(order)){
             if(Constant.ASC.equalsIgnoreCase(order)) {
                 return  page.addOrder(OrderItem.asc(orderField));
             }else {

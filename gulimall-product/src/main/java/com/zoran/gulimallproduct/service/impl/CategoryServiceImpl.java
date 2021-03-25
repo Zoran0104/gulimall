@@ -10,10 +10,7 @@ import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.CategoryService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("categoryService")
@@ -44,6 +41,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> asList) {
         //todo 判断是否有子菜单，有的话不允许删除
         baseMapper.deleteBatchIds(asList);
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> path = new ArrayList<>();
+        CategoryEntity categoryEntity = this.getById(catelogId);
+        path.add(categoryEntity.getCatId());
+        while (categoryEntity.getParentCid() != 0) {
+            categoryEntity = this.getById(categoryEntity.getParentCid());
+            path.add(categoryEntity.getCatId());
+        }
+        Collections.reverse(path);
+        return path.toArray(new Long[0]);
     }
 
     private List<CategoryEntity> getSubTree(CategoryEntity categoryEntity, List<CategoryEntity> categoryEntities) {
