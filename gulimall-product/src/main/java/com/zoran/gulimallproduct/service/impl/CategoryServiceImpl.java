@@ -7,15 +7,20 @@ import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.Query;
 import com.zoran.gulimallproduct.dao.CategoryDao;
 import com.zoran.gulimallproduct.entity.CategoryEntity;
+import com.zoran.gulimallproduct.service.CategoryBrandRelationService;
 import com.zoran.gulimallproduct.service.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("categoryService")
+@AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
-
+    private CategoryBrandRelationService categoryBrandRelationService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -54,6 +59,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
         Collections.reverse(path);
         return path.toArray(new Long[0]);
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void updateDetail(CategoryEntity category) {
+        this.updateById(category);
+        if (!StringUtils.isEmpty(category.getName().isEmpty())) {
+            categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
+        }
     }
 
     private List<CategoryEntity> getSubTree(CategoryEntity categoryEntity, List<CategoryEntity> categoryEntities) {
