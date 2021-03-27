@@ -2,6 +2,7 @@ package com.zoran.gulimallproduct.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoran.common.utils.PageUtils;
@@ -11,10 +12,10 @@ import com.zoran.gulimallproduct.dao.AttrGroupDao;
 import com.zoran.gulimallproduct.dao.CategoryDao;
 import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
 import com.zoran.gulimallproduct.entity.AttrEntity;
-import com.zoran.gulimallproduct.entity.AttrGroupEntity;
 import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
 import com.zoran.gulimallproduct.service.AttrService;
+import com.zoran.gulimallproduct.service.CategoryService;
 import com.zoran.gulimallproduct.vo.AttrRespVo;
 import com.zoran.gulimallproduct.vo.AttrVo;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     private final AttrGroupDao attrGroupDao;
 
     private final CategoryDao categoryDao;
+
+    private final CategoryService categoryService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -90,4 +93,37 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         return pageUtils;
     }
 
+    @Override
+    public AttrRespVo getAttrInfo(Long attrId) {
+        AttrRespVo attrRespVo = new AttrRespVo();
+        AttrEntity attrEntity = this.baseMapper.selectById(attrId);
+        BeanUtils.copyProperties(attrEntity, attrRespVo);
+        AttrAttrgroupRelationEntity attrRelationId = attrAttrgroupRelationService.getOne(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
+                .eq(AttrAttrgroupRelationEntity::getAttrId, attrEntity.getAttrId()));
+        Optional.ofNullable(attrRelationId)
+                .ifPresent(entity -> {
+                    attrRespVo.setGroupName(attrGroupDao.selectById(attrRelationId.getAttrGroupId()).getAttrGroupName());
+                    attrRespVo.setAttrGroupId(entity.getAttrGroupId());
+                });
+        Long[] catelogPath = categoryService.findCatelogPath(attrEntity.getCatelogId());
+        attrRespVo.setCatelogPath(catelogPath);
+        CategoryEntity categoryEntity = categoryService.getById(attrEntity.getCatelogId());
+        Optional.ofNullable(categoryEntity).ifPresent(entity -> attrRespVo.setCatelogName(entity.getName()));
+
+        return attrRespVo;
+    }
+
+    @Override
+    public void updateAttr(AttrVo attr) {
+        AttrEntity attrEntity = new AttrEntity();
+        BeanUtils.copyProperties(attr, attrEntity);
+        this.updateById(attrEntity);
+        AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
+        attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
+        attrAttrgroupRelationEntity.setAttrId(attr.getAttrId());
+        // 对应的attr可能在表中不存在 此时应执行insert操作
+        attrAttrgroupRelationService.saveOrUpdate(attrAttrgroupRelationEntity,
+                new LambdaUpdateWrapper<AttrAttrgroupRelationEntity>()
+                        .eq(AttrAttrgroupRelationEntity::getAttrId, attr.getAttrId()));
+    }
 }
