@@ -1,6 +1,7 @@
 package com.zoran.gulimallproduct.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -31,19 +32,19 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     @Override
     public PageUtils queryPage(Map<String, Object> params, Long catalogId) {
         IPage<AttrGroupEntity> page;
-        if (catalogId == 0) {
-             page = this.page(new Query<AttrGroupEntity>().getPage(params),
-                    new QueryWrapper<>());
-        } else {
-            String key = (String) params.get("key");
-            QueryWrapper<AttrGroupEntity> catalogQuery = new QueryWrapper<AttrGroupEntity>().eq("catalog_id", catalogId);
-            if (!StringUtils.isEmpty(key)) {
-                catalogQuery.and(obj -> {
-                    obj.eq("attr_group_id", key).or().like("attr_group_name", key);
-                });
-            }
-            page = this.page(new Query<AttrGroupEntity>().getPage(params), catalogQuery);
+        String key = (String) params.get("key");
+        LambdaQueryWrapper<AttrGroupEntity> catalogQuery = new LambdaQueryWrapper<AttrGroupEntity>();
+        if (!StringUtils.isEmpty(key)) {
+            catalogQuery.and(obj -> {
+                obj.eq(AttrGroupEntity::getAttrGroupId, key)
+                        .or()
+                        .like(AttrGroupEntity::getAttrGroupName, key);
+            });
         }
+        if (catalogId != 0) {
+            catalogQuery.eq(AttrGroupEntity::getCatelogId, catalogId);
+        }
+        page = this.page(new Query<AttrGroupEntity>().getPage(params),catalogQuery);
         return new PageUtils(page);
     }
 
