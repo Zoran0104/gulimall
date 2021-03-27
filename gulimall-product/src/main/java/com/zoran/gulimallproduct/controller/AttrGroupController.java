@@ -1,21 +1,20 @@
 package com.zoran.gulimallproduct.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import com.zoran.gulimallproduct.service.CategoryService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zoran.gulimallproduct.entity.AttrGroupEntity;
-import com.zoran.gulimallproduct.service.AttrGroupService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
+import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
+import com.zoran.gulimallproduct.entity.AttrEntity;
+import com.zoran.gulimallproduct.entity.AttrGroupEntity;
+import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
+import com.zoran.gulimallproduct.service.AttrGroupService;
+import com.zoran.gulimallproduct.service.AttrService;
+import com.zoran.gulimallproduct.service.CategoryService;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -30,7 +29,36 @@ import com.zoran.common.utils.R;
 @AllArgsConstructor
 public class AttrGroupController {
     private final AttrGroupService attrGroupService;
+
     private final CategoryService categoryService;
+
+    private final AttrService attrService;
+
+    private final AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    @GetMapping("/{attrGroupId}/attr/relation")
+    public R attrRelation(@PathVariable("attrGroupId") Long attrGroupId) {
+        List<AttrEntity> attrEntities = attrService.getRelationAttr(attrGroupId);
+        return R.ok().put("data", attrEntities);
+    }
+
+    @GetMapping("/{attrGroupId}/noattr/relation")
+    public R attrNotRelation(@PathVariable("attrGroupId") Long attrGroupId,@RequestParam Map<String, Object> params) {
+        PageUtils page = attrService.getNotRelationAttr(attrGroupId,params);
+        return R.ok().put("data", page);
+    }
+
+    @PostMapping("/attr/deleteRelation")
+    public R deleteRelation(@RequestBody AttrAttrgroupRelationEntity[] attrAttrgroupRelationEntities) {
+        attrGroupService.deleteRelation(attrAttrgroupRelationEntities);
+        return R.ok();
+    }
+
+    @PostMapping("/attr/addRelation")
+    public R addRelation(@RequestBody List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities) {
+        attrAttrgroupRelationService.saveBatch(attrAttrgroupRelationEntities);
+        return R.ok();
+    }
 
     /**
      * 列表
@@ -38,6 +66,7 @@ public class AttrGroupController {
     @RequestMapping("/list/{catelogId}")
     public R list(@RequestParam Map<String, Object> params,
                   @PathVariable("catelogId") Long catalogId) {
+
         //PageUtils page = attrGroupService.queryPage(params);
         PageUtils page = attrGroupService.queryPage(params, catalogId);
 

@@ -13,5 +13,10 @@
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
 
-
+    <delete id="batchDeleteRelations">
+        delete from pms_attr_attrgroup_relation where
+        <foreach collection="entities" item="entity" separator=" or ">
+            (attr_id=#{entity.attrId} and attr_group_id=#{entity.attrGroupId}
+        </foreach>
+    </delete>
 </mapper>
