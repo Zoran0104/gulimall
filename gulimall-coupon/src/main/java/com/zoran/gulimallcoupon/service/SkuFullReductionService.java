@@ -1,6 +1,7 @@
 package com.zoran.gulimallcoupon.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zoran.common.dto.SkuReductionDto;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.gulimallcoupon.entity.SkuFullReductionEntity;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface SkuFullReductionService extends IService<SkuFullReductionEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSkuReduction(SkuReductionDto skuReductionDto);
 }
 

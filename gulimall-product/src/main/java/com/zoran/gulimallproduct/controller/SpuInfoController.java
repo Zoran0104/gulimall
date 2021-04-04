@@ -1,19 +1,15 @@
 package com.zoran.gulimallproduct.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zoran.gulimallproduct.entity.SpuInfoEntity;
-import com.zoran.gulimallproduct.service.SpuInfoService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
+import com.zoran.gulimallproduct.entity.SpuInfoEntity;
+import com.zoran.gulimallproduct.service.SpuInfoService;
+import com.zoran.gulimallproduct.vo.SpuSaveVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -55,9 +51,9 @@ public class SpuInfoController {
      * 保存
      */
     @RequestMapping("/save")
-        public R save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
-
+        public R save(@RequestBody SpuSaveVo vo){
+		//spuInfoService.save(spuInfo);
+        spuInfoService.saveSpuInfo(vo);
         return R.ok();
     }
 
