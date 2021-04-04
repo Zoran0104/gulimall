@@ -9,6 +9,7 @@ import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
 import com.zoran.gulimallproduct.service.AttrGroupService;
 import com.zoran.gulimallproduct.service.AttrService;
 import com.zoran.gulimallproduct.service.CategoryService;
+import com.zoran.gulimallproduct.vo.AttrGroupWithAttrsVo;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,8 +44,8 @@ public class AttrGroupController {
     }
 
     @GetMapping("/{attrGroupId}/noattr/relation")
-    public R attrNotRelation(@PathVariable("attrGroupId") Long attrGroupId,@RequestParam Map<String, Object> params) {
-        PageUtils page = attrService.getNotRelationAttr(attrGroupId,params);
+    public R attrNotRelation(@PathVariable("attrGroupId") Long attrGroupId, @RequestParam Map<String, Object> params) {
+        PageUtils page = attrService.getNotRelationAttr(attrGroupId, params);
         return R.ok().put("data", page);
     }
 
@@ -82,6 +83,7 @@ public class AttrGroupController {
         AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
         Long catelogId = attrGroup.getCatelogId();
         Long[] path = categoryService.findCatelogPath(catelogId);
+        attrGroup.setCatalogPath(path);
         return R.ok().put("attrGroup", attrGroup);
     }
 
@@ -115,4 +117,9 @@ public class AttrGroupController {
         return R.ok();
     }
 
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId) {
+        List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+        return R.ok().put("data", vos);
+    }
 }

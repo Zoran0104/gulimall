@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
 import com.zoran.gulimallproduct.entity.AttrGroupEntity;
+import com.zoran.gulimallproduct.vo.AttrGroupWithAttrsVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,5 +23,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     PageUtils queryPage(Map<String, Object> params, Long catalogId);
 
     void deleteRelation(AttrAttrgroupRelationEntity[] attrAttrgroupRelationEntities);
+
+    List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId);
 }
 

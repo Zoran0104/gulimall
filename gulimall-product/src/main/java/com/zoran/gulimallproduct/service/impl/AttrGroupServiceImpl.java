@@ -8,16 +8,29 @@ import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.Query;
 import com.zoran.gulimallproduct.dao.AttrGroupDao;
 import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
+import com.zoran.gulimallproduct.entity.AttrEntity;
 import com.zoran.gulimallproduct.entity.AttrGroupEntity;
+import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
 import com.zoran.gulimallproduct.service.AttrGroupService;
+import com.zoran.gulimallproduct.service.AttrService;
+import com.zoran.gulimallproduct.vo.AttrGroupWithAttrsVo;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
+@AllArgsConstructor
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    private final AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    private final AttrService attrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -33,18 +46,16 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     public PageUtils queryPage(Map<String, Object> params, Long catalogId) {
         IPage<AttrGroupEntity> page;
         String key = (String) params.get("key");
-        LambdaQueryWrapper<AttrGroupEntity> catalogQuery = new LambdaQueryWrapper<AttrGroupEntity>();
+        QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<>();
         if (!StringUtils.isEmpty(key)) {
-            catalogQuery.and(obj -> {
-                obj.eq(AttrGroupEntity::getAttrGroupId, key)
-                        .or()
-                        .like(AttrGroupEntity::getAttrGroupName, key);
+            wrapper.and(w -> {
+                w.eq("attr_group_id", key).or().like("attr_group_name", key);
             });
         }
         if (catalogId != 0) {
-            catalogQuery.eq(AttrGroupEntity::getCatelogId, catalogId);
+            wrapper.eq("catelog_id", catalogId);
         }
-        page = this.page(new Query<AttrGroupEntity>().getPage(params),catalogQuery);
+        page = this.page(new Query<AttrGroupEntity>().getPage(params), wrapper);
         return new PageUtils(page);
     }
 
@@ -52,5 +63,18 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     @Override
     public void deleteRelation(AttrAttrgroupRelationEntity[] attrAttrgroupRelationEntities) {
         this.baseMapper.batchDeleteRelations(attrAttrgroupRelationEntities);
+    }
+
+    @Override
+    public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId) {
+        List<AttrGroupEntity> list = this.list(new LambdaQueryWrapper<AttrGroupEntity>()
+                .eq(AttrGroupEntity::getCatelogId, catelogId));
+        return list.stream().map(item -> {
+            AttrGroupWithAttrsVo attrGroupWithAttrsVo = new AttrGroupWithAttrsVo();
+            BeanUtils.copyProperties(item, attrGroupWithAttrsVo);
+            List<AttrEntity> attrs = attrService.getRelationAttr(item.getAttrGroupId());
+            attrGroupWithAttrsVo.setAttrs(attrs);
+            return attrGroupWithAttrsVo;
+        }).collect(Collectors.toList());
     }
 }
