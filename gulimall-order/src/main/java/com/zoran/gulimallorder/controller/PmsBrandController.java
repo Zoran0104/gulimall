@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:50:28
  */
 @RestController
-@RequestMapping("gulimallorder/pmsbrand")
+@RequestMapping("order/pmsbrand")
 public class PmsBrandController {
     @Autowired
     private PmsBrandService pmsBrandService;

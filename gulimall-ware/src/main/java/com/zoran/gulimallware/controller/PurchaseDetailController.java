@@ -18,14 +18,14 @@ import com.zoran.common.utils.R;
 
 
 /**
- * 
+ *
  *
  * @author zoran
  * @email zwyliufneg@outlook.com
  * @date 2020-10-22 10:54:00
  */
 @RestController
-@RequestMapping("gulimallware/purchasedetail")
+@RequestMapping("ware/purchasedetail")
 public class PurchaseDetailController {
     @Autowired
     private PurchaseDetailService purchaseDetailService;

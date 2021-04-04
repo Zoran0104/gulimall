@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:54:00
  */
 @RestController
-@RequestMapping("gulimallware/wareordertaskdetail")
+@RequestMapping("ware/wareordertaskdetail")
 public class WareOrderTaskDetailController {
     @Autowired
     private WareOrderTaskDetailService wareOrderTaskDetailService;

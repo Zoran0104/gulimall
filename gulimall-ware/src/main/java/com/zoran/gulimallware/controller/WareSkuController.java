@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:53:59
  */
 @RestController
-@RequestMapping("gulimallware/waresku")
+@RequestMapping("ware/waresku")
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;

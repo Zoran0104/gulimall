@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:57:58
  */
 @RestController
-@RequestMapping("gulimallmember/membercollectspu")
+@RequestMapping("member/membercollectspu")
 public class MemberCollectSpuController {
     @Autowired
     private MemberCollectSpuService memberCollectSpuService;

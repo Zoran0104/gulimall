@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:51
  */
 @RestController
-@RequestMapping("gulimallproduct/spuimages")
+@RequestMapping("product/spuimages")
 public class SpuImagesController {
     @Autowired
     private SpuImagesService spuImagesService;

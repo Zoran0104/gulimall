@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:39
  */
 @RestController
-@RequestMapping("gulimallcoupon/spubounds")
+@RequestMapping("coupon/spubounds")
 public class SpuBoundsController {
     @Autowired
     private SpuBoundsService spuBoundsService;

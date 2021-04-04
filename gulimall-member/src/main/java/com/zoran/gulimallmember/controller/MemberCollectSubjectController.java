@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:57:59
  */
 @RestController
-@RequestMapping("gulimallmember/membercollectsubject")
+@RequestMapping("member/membercollectsubject")
 public class MemberCollectSubjectController {
     @Autowired
     private MemberCollectSubjectService memberCollectSubjectService;

@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:41
  */
 @RestController
-@RequestMapping("gulimallcoupon/homesubjectspu")
+@RequestMapping("coupon/homesubjectspu")
 public class HomeSubjectSpuController {
     @Autowired
     private HomeSubjectSpuService homeSubjectSpuService;

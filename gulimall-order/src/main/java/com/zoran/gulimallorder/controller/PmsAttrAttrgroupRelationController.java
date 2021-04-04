@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2020-10-22 10:50:28
  */
 @RestController
-@RequestMapping("gulimallorder/pmsattrattrgrouprelation")
+@RequestMapping("order/pmsattrattrgrouprelation")
 public class PmsAttrAttrgroupRelationController {
     @Autowired
     private PmsAttrAttrgroupRelationService pmsAttrAttrgroupRelationService;

@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:41
  */
 @RestController
-@RequestMapping("gulimallcoupon/couponspucategoryrelation")
+@RequestMapping("coupon/couponspucategoryrelation")
 public class CouponSpuCategoryRelationController {
     @Autowired
     private CouponSpuCategoryRelationService couponSpuCategoryRelationService;

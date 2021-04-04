@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:57:59
  */
 @RestController
-@RequestMapping("gulimallmember/integrationchangehistory")
+@RequestMapping("member/integrationchangehistory")
 public class IntegrationChangeHistoryController {
     @Autowired
     private IntegrationChangeHistoryService integrationChangeHistoryService;

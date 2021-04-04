@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:50:27
  */
 @RestController
-@RequestMapping("gulimallorder/pmsspucomment")
+@RequestMapping("order/pmsspucomment")
 public class PmsSpuCommentController {
     @Autowired
     private PmsSpuCommentService pmsSpuCommentService;

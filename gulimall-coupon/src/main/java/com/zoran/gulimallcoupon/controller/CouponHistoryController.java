@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:41
  */
 @RestController
-@RequestMapping("gulimallcoupon/couponhistory")
+@RequestMapping("coupon/couponhistory")
 public class CouponHistoryController {
     @Autowired
     private CouponHistoryService couponHistoryService;

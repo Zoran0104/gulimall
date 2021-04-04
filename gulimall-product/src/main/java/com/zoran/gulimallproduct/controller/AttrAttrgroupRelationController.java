@@ -1,19 +1,14 @@
 package com.zoran.gulimallproduct.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
-import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
+import com.zoran.gulimallproduct.entity.AttrAttrgroupRelationEntity;
+import com.zoran.gulimallproduct.service.AttrAttrgroupRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -25,7 +20,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:52
  */
 @RestController
-@RequestMapping("gulimallproduct/attrattrgrouprelation")
+@RequestMapping("product/attrattrgrouprelation")
 public class AttrAttrgroupRelationController {
     @Autowired
     private AttrAttrgroupRelationService attrAttrgroupRelationService;

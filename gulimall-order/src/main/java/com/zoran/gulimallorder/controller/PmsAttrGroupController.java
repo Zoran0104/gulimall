@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:50:27
  */
 @RestController
-@RequestMapping("gulimallorder/pmsattrgroup")
+@RequestMapping("order/pmsattrgroup")
 public class PmsAttrGroupController {
     @Autowired
     private PmsAttrGroupService pmsAttrGroupService;

@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:40
  */
 @RestController
-@RequestMapping("gulimallcoupon/seckillsession")
+@RequestMapping("coupon/seckillsession")
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;

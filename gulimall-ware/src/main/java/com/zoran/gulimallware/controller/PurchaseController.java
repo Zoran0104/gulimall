@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2020-10-22 10:54:00
  */
 @RestController
-@RequestMapping("gulimallware/purchase")
+@RequestMapping("ware/purchase")
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;

@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 10:50:27
  */
 @RestController
-@RequestMapping("gulimallorder/pmscategory")
+@RequestMapping("order/pmscategory")
 public class PmsCategoryController {
     @Autowired
     private PmsCategoryService pmsCategoryService;

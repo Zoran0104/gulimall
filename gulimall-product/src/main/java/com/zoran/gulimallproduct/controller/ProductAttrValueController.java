@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:52
  */
 @RestController
-@RequestMapping("gulimallproduct/productattrvalue")
+@RequestMapping("product/productattrvalue")
 public class ProductAttrValueController {
     @Autowired
     private ProductAttrValueService productAttrValueService;

@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 09:26:40
  */
 @RestController
-@RequestMapping("gulimallcoupon/seckillskunotice")
+@RequestMapping("coupon/seckillskunotice")
 public class SeckillSkuNoticeController {
     @Autowired
     private SeckillSkuNoticeService seckillSkuNoticeService;

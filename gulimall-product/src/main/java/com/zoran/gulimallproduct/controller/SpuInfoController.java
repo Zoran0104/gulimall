@@ -25,7 +25,7 @@ import com.zoran.common.utils.R;
  * @date 2020-10-22 00:03:51
  */
 @RestController
-@RequestMapping("gulimallproduct/spuinfo")
+@RequestMapping("product/spuinfo")
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
