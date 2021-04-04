@@ -1,22 +1,25 @@
 package com.zoran.gulimallproduct.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.zoran.gulimallproduct.dao.BrandDao;
-import com.zoran.gulimallproduct.dao.CategoryDao;
-import com.zoran.gulimallproduct.entity.BrandEntity;
-import com.zoran.gulimallproduct.entity.CategoryEntity;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.Query;
-
+import com.zoran.gulimallproduct.dao.BrandDao;
 import com.zoran.gulimallproduct.dao.CategoryBrandRelationDao;
+import com.zoran.gulimallproduct.dao.CategoryDao;
+import com.zoran.gulimallproduct.entity.BrandEntity;
 import com.zoran.gulimallproduct.entity.CategoryBrandRelationEntity;
+import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.CategoryBrandRelationService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("categoryBrandRelationService")
@@ -25,6 +28,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     private BrandDao brandDao;
     private CategoryDao categoryDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryBrandRelationEntity> page = this.page(
@@ -66,4 +70,11 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
                         .eq(CategoryBrandRelationEntity::getCatelogId, catId));
     }
 
+    @Override
+    public List<BrandEntity> getBrandsByCatId(Long catId) {
+        List<CategoryBrandRelationEntity> entities = this.baseMapper.selectList(new LambdaQueryWrapper<CategoryBrandRelationEntity>()
+                .eq(CategoryBrandRelationEntity::getCatelogId, catId));
+        return entities.stream().map(entity -> brandDao.selectById(entity.getBrandId())).collect(Collectors.toList());
+
+    }
 }
