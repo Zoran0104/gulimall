@@ -4,14 +4,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: baidu_route
-          uri: https://www.baidu.com
-          predicates:
-            - Query=url,baidu
-        - id: qq_route
-          uri: https://www.qq.com
-          predicates:
-            - Query=url,qq
         - id: oss_route
           uri: lb://gulimall-thirdparty
           predicates:
@@ -22,6 +14,12 @@ spring:
           uri: lb://gulimall-product
           predicates:
             - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+        - id: member_route
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
           filters:
             - RewritePath=/api/(?<segment>/?.*),/$\{segment}
         - id: admin_route

@@ -19,6 +19,7 @@
         <module>gulimall-commons</module>
         <module>gulimall-third-party</module>
         <module>renren-fast</module>
+        <module>gulimall-search</module>
     </modules>
     <dependencyManagement>
         <dependencies>
