@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoran.common.dto.SkuReductionDto;
 import com.zoran.common.dto.SpuBoundDto;
+import com.zoran.common.dto.es.SkuEsModel;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.Query;
 import com.zoran.gulimallproduct.dao.SpuInfoDao;
@@ -20,9 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -37,6 +36,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private final SkuImagesService skuImagesService;
     private final SkuSaleAttrValueService skuSaleAttrValueService;
     private final CouponFeignService couponFeignService;
+    private final BrandService brandService;
+    private final CategoryService categoryService;
+    private final AttrService attrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -118,6 +120,41 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
             });
         }
+    }
+
+    @Override
+    public void up(Long spuId) {
+        // 查出当前skuId对应的所有sku信息，品牌的名字
+        List<SkuInfoEntity> skus = skuInfoService.getSkuBySpuId(spuId);
+
+        // 查询当前sku的所有可以被用来检索的属性
+        List<ProductAttrValueEntity> baseAttrs = productAttrValueService.baseAttrListForSpu(spuId);
+        List<Long> attrIds = baseAttrs.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
+        List<Long> attrSearchIds = attrService.selectSearchAttrs(attrIds);
+        Set<Long> idSet = new HashSet<>(attrSearchIds);
+        List<SkuEsModel.Attrs> attrsList = baseAttrs.stream().filter(item -> idSet.contains(item.getAttrId())).map(item -> {
+            SkuEsModel.Attrs attrs = new SkuEsModel.Attrs();
+            BeanUtils.copyProperties(item, attrs);
+            return attrs;
+        }).collect(Collectors.toList());
+
+        // 封装每个sku的信息
+        skus.stream().map(sku -> {
+            SkuEsModel model = new SkuEsModel();
+            BeanUtils.copyProperties(sku, model);
+            model.setSkuPrice(sku.getPrice());
+            model.setSkuImg(sku.getSkuDefaultImg());
+
+            BrandEntity brand = brandService.getById(model.getBrandId());
+            model.setBrandName(brand.getName());
+            model.setBrandImg(brand.getLogo());
+            CategoryEntity categoryEntity = categoryService.getById(model.getCatalogId());
+            model.setCatalogName(categoryEntity.getName());
+            model.setAttrs(attrsList);
+
+            model.setHotScore(0L);
+            return model;
+        }).collect(Collectors.toList());
     }
 
 }

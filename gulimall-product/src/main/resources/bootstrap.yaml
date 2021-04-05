@@ -12,5 +12,7 @@ spring:
           - { data-id: common.yaml,group: common,refresh: true }
   profiles:
     active: dev
+  thymeleaf:
+    cache: false
 server:
   port: 10000
