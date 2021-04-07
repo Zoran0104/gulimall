@@ -9,6 +9,7 @@ import com.zoran.gulimallproduct.dao.CategoryDao;
 import com.zoran.gulimallproduct.entity.CategoryEntity;
 import com.zoran.gulimallproduct.service.CategoryBrandRelationService;
 import com.zoran.gulimallproduct.service.CategoryService;
+import com.zoran.gulimallproduct.vo.Catalog2Vo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
     private CategoryBrandRelationService categoryBrandRelationService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -68,6 +70,30 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         if (!StringUtils.isEmpty(category.getName().isEmpty())) {
             categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
         }
+    }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+    }
+
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatelogJson() {
+        // 单次数据库
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
+        Map<String, List<CategoryEntity>> map = new HashMap<>();
+        categoryEntities.forEach(item -> {
+            if (!map.containsKey(item.getParentCid().toString())) {
+                map.put(item.getParentCid().toString(), new ArrayList<>());
+            }
+            map.get(item.getParentCid().toString()).add(item);
+        });
+        return categoryEntities.stream().filter(item -> item.getParentCid() == 0).collect(Collectors.toMap(item-> item.getCatId().toString(),
+                item -> map.get(item.getCatId().toString()).stream()
+                        .map(l2 -> new Catalog2Vo(item.getCatId().toString(), l2.getCatId().toString(), l2.getName(),
+                                map.get(l2.getCatId().toString()).stream()
+                                        .map(l3 -> new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName()))
+                                        .collect(Collectors.toList()))).collect(Collectors.toList())));
     }
 
     private List<CategoryEntity> getSubTree(CategoryEntity categoryEntity, List<CategoryEntity> categoryEntities) {
