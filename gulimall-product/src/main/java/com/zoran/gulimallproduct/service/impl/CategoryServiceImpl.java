@@ -1,5 +1,8 @@
 package com.zoran.gulimallproduct.service.impl;
 
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,17 +14,21 @@ import com.zoran.gulimallproduct.service.CategoryBrandRelationService;
 import com.zoran.gulimallproduct.service.CategoryService;
 import com.zoran.gulimallproduct.vo.Catalog2Vo;
 import lombok.AllArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service("categoryService")
 @AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
-    private CategoryBrandRelationService categoryBrandRelationService;
+    private final CategoryBrandRelationService categoryBrandRelationService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -78,22 +85,60 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
-    public Map<String, List<Catalog2Vo>> getCatelogJson() {
-        // 单次数据库
-        List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
-        Map<String, List<CategoryEntity>> map = new HashMap<>();
-        categoryEntities.forEach(item -> {
-            if (!map.containsKey(item.getParentCid().toString())) {
-                map.put(item.getParentCid().toString(), new ArrayList<>());
-            }
-            map.get(item.getParentCid().toString()).add(item);
-        });
-        return categoryEntities.stream().filter(item -> item.getParentCid() == 0).collect(Collectors.toMap(item-> item.getCatId().toString(),
-                item -> map.get(item.getCatId().toString()).stream()
-                        .map(l2 -> new Catalog2Vo(item.getCatId().toString(), l2.getCatId().toString(), l2.getName(),
-                                map.get(l2.getCatId().toString()).stream()
-                                        .map(l3 -> new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName()))
-                                        .collect(Collectors.toList()))).collect(Collectors.toList())));
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        String catalogJson = stringRedisTemplate.opsForValue().get("catalogJson");
+        if (StringUtils.isEmpty(catalogJson)) {
+            return getCatalogJsonWithRedisLock();
+        }
+        return JSONUtil.toBean(catalogJson, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        }, true);
+    }
+
+    @SuppressWarnings({"AliControlFlowStatementWithoutBraces", "StatementWithEmptyBody"})
+    public Map<String, List<Catalog2Vo>> getCatalogJsonWithRedisLock() {
+        String lock = UUID.fastUUID().toString(true);
+        while (!Optional.ofNullable(stringRedisTemplate.opsForValue().setIfAbsent("lock", lock, 10, TimeUnit.SECONDS))
+                .orElse(false)) ;
+        Map<String, List<Catalog2Vo>> catelogFromDb = getCatelogFromDb();
+        String script = "if redis.call(\"get\",KEYS[1]) == ARGV[1] then\n" +
+                "    return redis.call(\"del\",KEYS[1])\n" +
+                "else\n" +
+                "    return 0\n" +
+                "end";
+        stringRedisTemplate.execute(new DefaultRedisScript<>(script), Arrays.asList("lock"),lock);
+        return catelogFromDb;
+    }
+
+    private Map<String, List<Catalog2Vo>> getCatelogFromDb() {
+        String catalogJson = stringRedisTemplate.opsForValue().get("catalogJson");
+        if (StringUtils.isEmpty(catalogJson)) {
+            System.out.println("进行查询数据库");
+            List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
+            Map<String, List<CategoryEntity>> map = new HashMap<>(100);
+            categoryEntities.forEach(item -> {
+                if (!map.containsKey(item.getParentCid().toString())) {
+                    map.put(item.getParentCid().toString(), new ArrayList<>());
+                }
+                map.get(item.getParentCid().toString()).add(item);
+            });
+            Map<String, List<Catalog2Vo>> collect = categoryEntities.stream().filter(item -> item.getParentCid() == 0)
+                    .collect(Collectors.toMap(item -> item.getCatId().toString(),
+                            item -> map.get(item.getCatId().toString()).stream()
+                                    .map(l2 -> new Catalog2Vo(item.getCatId().toString(), l2.getCatId().toString(), l2
+                                            .getName(),
+                                            map.get(l2.getCatId().toString()).stream()
+                                                    .map(l3 -> new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(), l3
+                                                            .getCatId().toString(), l3.getName()))
+                                                    .collect(Collectors.toList()))).collect(Collectors.toList())));
+            stringRedisTemplate.opsForValue()
+                    .set("catalogJson", JSONUtil.toJsonStr(collect), 1, TimeUnit.DAYS);
+        }
+        return JSONUtil.toBean(catalogJson, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        }, true);
+    }
+
+    public synchronized Map<String, List<Catalog2Vo>> getCatelogJsonFromDbLocalLock() {
+        return getCatelogFromDb();
     }
 
     private List<CategoryEntity> getSubTree(CategoryEntity categoryEntity, List<CategoryEntity> categoryEntities) {

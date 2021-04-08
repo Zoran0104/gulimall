@@ -51,5 +51,7 @@ logs
 **/mvnw.cmd
 **/.gitignore
 
+test/
+
 
 
