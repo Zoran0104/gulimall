@@ -5,6 +5,8 @@ import com.zoran.gulimallproduct.service.CategoryService;
 import com.zoran.gulimallproduct.vo.Catalog2Vo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：zoran
@@ -25,6 +28,7 @@ import java.util.Map;
 @Slf4j
 public class IndexController {
     private final CategoryService categoryService;
+    private final RedissonClient redissonClient;
 
 
     @GetMapping({"/", "/index.html"})
@@ -44,7 +48,16 @@ public class IndexController {
 
     @GetMapping("/hello")
     @ResponseBody
-    public String getHello() {
+    public String getHello() throws InterruptedException {
+        RLock lock = redissonClient.getLock("lock");
+        lock.lock();
+        try {
+                System.out.println("lock success" + Thread.currentThread().getId());
+                TimeUnit.SECONDS.sleep(30);
+        } finally {
+            System.out.println("unlock success" + Thread.currentThread().getId());
+            lock.unlock();
+        }
         return "hello";
     }
 }

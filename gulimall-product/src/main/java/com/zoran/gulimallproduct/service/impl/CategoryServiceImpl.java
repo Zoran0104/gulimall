@@ -14,6 +14,8 @@ import com.zoran.gulimallproduct.service.CategoryBrandRelationService;
 import com.zoran.gulimallproduct.service.CategoryService;
 import com.zoran.gulimallproduct.vo.Catalog2Vo;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
     private final CategoryBrandRelationService categoryBrandRelationService;
     private final StringRedisTemplate stringRedisTemplate;
+    private final RedissonClient redissonClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -94,6 +97,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }, true);
     }
 
+    public Map<String, List<Catalog2Vo>> getCatalogJsonWithRedissonLock() {
+        RLock lock = redissonClient.getLock("catalogJson-lock");
+        lock.lock();
+        try {
+            return getCatelogFromDb();
+        }finally {
+            lock.unlock();
+        }
+    }
+
     @SuppressWarnings({"AliControlFlowStatementWithoutBraces", "StatementWithEmptyBody"})
     public Map<String, List<Catalog2Vo>> getCatalogJsonWithRedisLock() {
         String lock = UUID.fastUUID().toString(true);
@@ -105,7 +118,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 "else\n" +
                 "    return 0\n" +
                 "end";
-        stringRedisTemplate.execute(new DefaultRedisScript<>(script), Arrays.asList("lock"),lock);
+        stringRedisTemplate.execute(new DefaultRedisScript<>(script), Arrays.asList("lock"), lock);
         return catelogFromDb;
     }
 
