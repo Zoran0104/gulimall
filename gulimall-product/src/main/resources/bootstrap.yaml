@@ -14,5 +14,9 @@ spring:
     active: dev
   thymeleaf:
     cache: false
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
 server:
   port: 10000
