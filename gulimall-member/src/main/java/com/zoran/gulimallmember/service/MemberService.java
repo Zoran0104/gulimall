@@ -18,6 +18,6 @@ public interface MemberService extends IService<MemberEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    void register(UserRegisterVo userRegisterVo);
+    void register(UserRegisterVo userRegisterVo) throws Exception;
 }
 

@@ -27,9 +27,10 @@ public class LoginController {
             return R.error(503,"短信发送间隔太短，请稍后再试");
         }
         String code = UUID.randomUUID().toString().substring(0, 5);
+        System.err.println(code);
         stringRedisTemplate.opsForValue()
-                .set(AuthConstant.SMS_CODE_CACHE_PREFIX + mobile + "-" + System.currentTimeMillis(),
-                        code, 10, TimeUnit.MINUTES);
+                .set(AuthConstant.SMS_CODE_CACHE_PREFIX + mobile,
+                        code + "-" + System.currentTimeMillis(), 10, TimeUnit.MINUTES);
         // 因短信服务商收费问题，此处仅模拟调用，非实际调用
         //thirdPartyFeignService.sendSms(mobile, code);
         return R.ok();

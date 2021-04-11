@@ -25,8 +25,13 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @PostMapping("/register")
     public R register(@RequestBody UserRegisterVo userRegisterVo) {
-        memberService.register(userRegisterVo);
+        try {
+            memberService.register(userRegisterVo);
+        } catch (Exception e) {
+            return R.error(510, "用户名或手机号已经存在");
+        }
         return R.ok();
     }
 
