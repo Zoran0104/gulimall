@@ -3,6 +3,7 @@ package com.zoran.gulimallmember.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zoran.common.utils.PageUtils;
 import com.zoran.gulimallmember.entity.MemberEntity;
+import com.zoran.gulimallmember.vo.UserRegisterVo;
 
 import java.util.Map;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface MemberService extends IService<MemberEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void register(UserRegisterVo userRegisterVo);
 }
 

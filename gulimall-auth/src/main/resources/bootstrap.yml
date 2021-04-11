@@ -1,16 +1,16 @@
 spring:
-  profiles:
-    active: dev
   application:
-    name: gulimall-thirdparty
+    name: gulimall-auth
   cloud:
     nacos:
       config:
         server-addr: localhost:8848
         file-extension: yaml
         namespace: 98e1df82-afef-4137-9035-a287b3f925da
-        group: product
+        group: auth
         extension-configs:
           - { data-id: common.yaml,group: common,refresh: true }
+  profiles:
+    active: dev
 server:
-  port: 12000
+  port: 20000
