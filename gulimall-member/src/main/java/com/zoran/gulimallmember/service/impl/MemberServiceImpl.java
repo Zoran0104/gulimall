@@ -12,12 +12,14 @@ import com.zoran.gulimallmember.exception.PhoneExistException;
 import com.zoran.gulimallmember.exception.UsernameExistException;
 import com.zoran.gulimallmember.service.MemberLevelService;
 import com.zoran.gulimallmember.service.MemberService;
+import com.zoran.gulimallmember.vo.UserLoginVo;
 import com.zoran.gulimallmember.vo.UserRegisterVo;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service("memberService")
@@ -46,6 +48,15 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         memberEntity.setUsername(userRegisterVo.getUserName());
         memberEntity.setPassword(new BCryptPasswordEncoder().encode(userRegisterVo.getPassword()));
         this.baseMapper.insert(memberEntity);
+    }
+
+    @Override
+    public MemberEntity login(UserLoginVo userLoginVo) {
+        MemberEntity memberEntity = this.baseMapper
+                .selectOne(new QueryWrapper<MemberEntity>().eq("username", userLoginVo.getAccount()).or()
+                        .eq("mobile", userLoginVo.getAccount()));
+        return Optional.ofNullable(memberEntity).map(entity -> new BCryptPasswordEncoder()
+                .matches(userLoginVo.getPassword(), memberEntity.getPassword()) ? memberEntity : null).orElse(null);
     }
 
     private void checkUserName(String userName) throws Exception {

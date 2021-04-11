@@ -4,12 +4,14 @@ import com.zoran.common.utils.PageUtils;
 import com.zoran.common.utils.R;
 import com.zoran.gulimallmember.entity.MemberEntity;
 import com.zoran.gulimallmember.service.MemberService;
+import com.zoran.gulimallmember.vo.UserLoginVo;
 import com.zoran.gulimallmember.vo.UserRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -33,6 +35,12 @@ public class MemberController {
             return R.error(510, "用户名或手机号已经存在");
         }
         return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody UserLoginVo userLoginVo) {
+        MemberEntity memberEntity = memberService.login(userLoginVo);
+        return Optional.ofNullable(memberEntity).map(entity -> R.ok()).orElse(R.error(555,"账号或密码错误"));
     }
 
     /**
