@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +53,10 @@ public class IndexController {
     }
 
     @PostMapping("/login")
-    public String login(UserLoginVo userLoginVo) {
+    public String login(UserLoginVo userLoginVo, HttpSession session) {
         R login = memberFeignService.login(userLoginVo);
         if (login.get("code").equals(0)) {
+            session.setAttribute("loginUser", "zoran");
             return SUCCESS_LOGIN_FORWARD;
         }
         return FAIL_LOGIN_FORWARD;
