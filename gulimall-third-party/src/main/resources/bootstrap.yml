@@ -14,3 +14,5 @@ spring:
           - { data-id: common.yaml,group: common,refresh: true }
 server:
   port: 12000
+access-key: LTAI5tKPdKxDUWHaVXQEprVH
+secret: wulaz8uIM1QBv2eX0pRUDJe67OJyTa
